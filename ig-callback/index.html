@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IG OAuth Callback</title>
+<style>
+body{font-family:system-ui;max-width:640px;margin:60px auto;padding:0 16px}
+code{display:block;word-break:break-all;background:#f3f3f3;padding:12px;border-radius:8px}
+button{margin-top:12px;padding:8px 16px}
+</style>
+</head>
+<body>
+<h2>Instagram 인증 코드</h2>
+<code id="c">-</code>
+<button id="copy">복사</button>
+<p id="msg">1시간 안에 1회만 사용 가능해요.</p>
+<script>
+var q = location.search;
+var p = new URLSearchParams(q);
+var code = p.get('code');
+var state = p.get('state') || '';
+document.getElementById('c').textContent =
+  code || ('오류: ' + (p.get('error_description') || p.get('error') || '코드 없음'));
+document.getElementById('copy').onclick = function () {
+  navigator.clipboard.writeText(document.getElementById('c').textContent);
+};
+history.replaceState(null, '', location.pathname);
+if (code && state.indexOf('local-') === 0) {
+  document.getElementById('msg').textContent = '로컬 인증 서버로 전달 중...';
+  location.replace('http://localhost:8765/callback' + q);
+}
+</script>
+</body>
+</html>
